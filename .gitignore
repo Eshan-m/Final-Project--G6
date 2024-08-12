@@ -1,3 +1,9 @@
 **/.terraform/*
-web.pem
-web.pub
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Ignore sensitive files
+*.pem
+*.key
+*.pub
