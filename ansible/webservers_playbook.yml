@@ -1,0 +1,37 @@
+---
+- name: Manage Web Servers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure HTTPD is installed
+      yum:
+        name: httpd
+        state: present
+    
+    - name: Ensure HTTPD is running and enabled
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Check HTTPD service status
+      command: systemctl status httpd
+      register: httpd_status
+      ignore_errors: yes
+    
+    - name: Output HTTPD status
+      debug:
+        var: httpd_status.stdout_lines
+    
+    - name: Check connectivity to the server
+      ping:
+    
+    - name: Update all packages to the latest version
+      yum:
+        name: '*'
+        state: latest
+    
+    - name: Reboot the server if a kernel update was installed
+      reboot:
+        reboot_timeout: 300
+      when: "'kernel' in yum_result.changes"

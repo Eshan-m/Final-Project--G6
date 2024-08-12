@@ -107,6 +107,7 @@ resource "aws_instance" "web_3" {
   security_groups             = [aws_security_group.web_securityg.id]
   key_name                    = aws_key_pair.web.key_name  # Create the Key by running the command ssh-keygen -t rsa  -f web
   associate_public_ip_address = true
+  /* 
   user_data = <<-EOF
               #!/bin/bash
               sudo yum -y update 
@@ -115,9 +116,8 @@ resource "aws_instance" "web_3" {
               sudo systemctl start httpd
               sudo systemctl enable httpd
               EOF
-  tags = merge(var.web_server_tags, { Name = "web-server-3" })
-
- /* provisioner "file" {
+  
+  provisioner "file" {
     source      = "index.html"
     destination = "/var/www/html/index.html"
   }
@@ -130,6 +130,7 @@ resource "aws_instance" "web_3" {
     ]
   }
   */
+  tags = merge(var.web_server_tags, { Name = "web-server-3" })
 }
 
 # Launch Web Server in Public Subnet 4
@@ -140,6 +141,7 @@ resource "aws_instance" "web_4" {
   security_groups             = [aws_security_group.web_securityg.id]
   key_name                    = aws_key_pair.web.key_name  # Create the Key by running the command ssh-keygen -t rsa  -f web
   associate_public_ip_address = true
+  /*
   user_data = <<-EOF
               #!/bin/bash
               sudo yum -y update 
@@ -148,9 +150,9 @@ resource "aws_instance" "web_4" {
               sudo systemctl start httpd
               sudo systemctl enable httpd
               EOF
-  tags = merge(var.web_server_tags, { Name = "web-server-4" })
+  
 
- /* provisioner "file" {
+  provisioner "file" {
     source      = "index.html"
     destination = "/var/www/html/index.html"
   }
@@ -163,6 +165,7 @@ resource "aws_instance" "web_4" {
     ]
  }
  */
+ tags = merge(var.web_server_tags, { Name = "web-server-4" })
 }
 
 # Launch Web Server in Private Subnet 1
