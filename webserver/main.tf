@@ -1,9 +1,18 @@
 #Webserver main
+# Use remote state to retrieve the data
+data "terraform_remote_state" "network" { // This is to use Outputs from Remote State
+  backend = "s3"
+  config = {
+    bucket = "group6-acs"            // Bucket from where to GET Terraform State
+    key    = "network/terraform.tfstate" // Object name in the bucket to GET Terraform State
+    region = "us-east-1"                       // Region where bucket created
+  }
+}
 # Security Group for Web Servers
-resource "aws_security_group" "web_sg" {
+resource "aws_security_group" "web_securityg" {
   name        = var.web_security_group_name
   description = "Allow HTTP and SSH inbound"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
 
   ingress {
     from_port   = 22
@@ -18,7 +27,13 @@ resource "aws_security_group" "web_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
   egress {
     from_port   = 0
     to_port     = 0
@@ -35,38 +50,40 @@ resource "aws_security_group" "web_sg" {
 resource "aws_instance" "web_1" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.public_subnet_1.id
-  security_groups             = [aws_security_group.web_sg.name]
-  key_name                    = var.key_name
+  subnet_id                   = data.terraform_remote_state.network.outputs.public_subnet_1_id
+  security_groups             = [aws_security_group.web_securityg.id]
+  key_name                    = aws_key_pair.web.key_name  # Create the Key by running the command ssh-keygen -t rsa  -f web
   associate_public_ip_address = true
-
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo yum -y update 
+              sudo yum -y install httpd
+              echo "<h1>Hello from WebServer 1 - PS1</h1>" > /var/www/html/index.html
+              sudo systemctl start httpd
+              sudo systemctl enable httpd
+              EOF
   tags = merge(var.web_server_tags, { Name = "web-server-1" })
-
-  provisioner "file" {
-    source      = "index.html"
-    destination = "/var/www/html/index.html"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo yum install -y httpd",
-      "sudo systemctl start httpd",
-      "sudo systemctl enable httpd",
-    ]
-  }
 }
+
 
 # Launch Web Server in Public Subnet 2
 resource "aws_instance" "web_2" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.public_subnet_2.id
-  security_groups             = [aws_security_group.web_sg.name]
-  key_name                    = var.key_name
+  subnet_id                   = data.terraform_remote_state.network.outputs.public_subnet_2_id
+  security_groups             = [aws_security_group.web_securityg.id]
+  key_name                    = aws_key_pair.web.key_name  # Create the Key by running the command ssh-keygen -t rsa  -f web
   associate_public_ip_address = true
-
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo yum -y update 
+              sudo yum -y install httpd
+              echo "<h1>Hello from WebServer 2 - PS2</h1>" > /var/www/html/index.html
+              sudo systemctl start httpd
+              sudo systemctl enable httpd
+              EOF
   tags = merge(var.web_server_tags, { Name = "BASITION-web-server-2" })
-
+ /*
   provisioner "file" {
     source      = "index.html"
     destination = "/var/www/html/index.html"
@@ -79,17 +96,25 @@ resource "aws_instance" "web_2" {
       "sudo systemctl enable httpd",
     ]
   }
+  */
 }
 
 # Launch Web Server in Public Subnet 3
 resource "aws_instance" "web_3" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.public_subnet_3.id
-  security_groups             = [aws_security_group.web_sg.name]
-  key_name                    = var.key_name
+  subnet_id                   = data.terraform_remote_state.network.outputs.public_subnet_3_id
+  security_groups             = [aws_security_group.web_securityg.id]
+  key_name                    = aws_key_pair.web.key_name  # Create the Key by running the command ssh-keygen -t rsa  -f web
   associate_public_ip_address = true
-
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo yum -y update 
+              sudo yum -y install httpd
+              echo "<h1>Hello from WebServer 3 - PS3</h1>" > /var/www/html/index.html
+              sudo systemctl start httpd
+              sudo systemctl enable httpd
+              EOF
   tags = merge(var.web_server_tags, { Name = "web-server-3" })
 
  /* provisioner "file" {
@@ -111,11 +136,18 @@ resource "aws_instance" "web_3" {
 resource "aws_instance" "web_4" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.public_subnet_4.id
-  security_groups             = [aws_security_group.web_sg.name]
-  key_name                    = var.key_name
+  subnet_id                   = data.terraform_remote_state.network.outputs.public_subnet_4_id
+  security_groups             = [aws_security_group.web_securityg.id]
+  key_name                    = aws_key_pair.web.key_name  # Create the Key by running the command ssh-keygen -t rsa  -f web
   associate_public_ip_address = true
-
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo yum -y update 
+              sudo yum -y install httpd
+              echo "<h1>Hello from WebServer 4 - PS4</h1>" > /var/www/html/index.html
+              sudo systemctl start httpd
+              sudo systemctl enable httpd
+              EOF
   tags = merge(var.web_server_tags, { Name = "web-server-4" })
 
  /* provisioner "file" {
@@ -130,44 +162,108 @@ resource "aws_instance" "web_4" {
       "sudo systemctl enable httpd",
     ]
  }
-  */
+ */
 }
 
 # Launch Web Server in Private Subnet 1
 resource "aws_instance" "webprivate_1" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.private_subnet_1.id
-  security_groups             = [aws_security_group.web_sg.name]
-  key_name                    = var.key_name
+  subnet_id                   = data.terraform_remote_state.network.outputs.private_subnet_1_id
+  security_groups             = [aws_security_group.web_securityg.id]
+  key_name                    = aws_key_pair.web.key_name  # Create the Key by running the command ssh-keygen -t rsa  -f web
   associate_public_ip_address = true
-
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo yum -y update 
+              sudo yum -y install httpd
+              echo "<h1>Hello from WebServer 1 - PRS1</h1>" > /var/www/html/index.html
+              sudo systemctl start httpd
+              sudo systemctl enable httpd
+              EOF
   tags = merge(var.web_server_tags, { Name = "web-server-5" })
-
- /* provisioner "file" {
-    source      = "index.html"
-    destination = "/var/www/html/index.html"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo yum install -y httpd",
-      "sudo systemctl start httpd",
-      "sudo systemctl enable httpd",
-    ]
- }
-  */
+  
 }
 
 # Launch Web Server in Private Subnet 2
 resource "aws_instance" "vmprivate_5" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.private_subnet_2.id
-  security_groups             = [aws_security_group.web_sg.name]
-  key_name                    = var.key_name
+  subnet_id                   = data.terraform_remote_state.network.outputs.private_subnet_2_id
+  security_groups             = [aws_security_group.web_securityg.id]
+  key_name                    = aws_key_pair.web.key_name  # Create the Key by running the command ssh-keygen -t rsa  -f web
   associate_public_ip_address = true
 
   tags = merge(var.web_server_tags, { Name = "VM5" })
  
+}
+
+# Adding SSH  key to instance
+resource "aws_key_pair" "web" {
+  key_name   = var.prefix
+  public_key = file("${var.prefix}.pub")
+}
+
+# Create Target Group for Web Servers
+resource "aws_lb_target_group" "web_tg" {
+  name        = "${var.prefix}-tg"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = data.terraform_remote_state.network.outputs.vpc_id
+  target_type = "instance"
+
+  health_check {
+    path                = "/"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+    matcher             = "200"
+  }
+}
+
+# Create the Application Load Balancer
+resource "aws_lb" "web_lb" {
+  name               = "${var.prefix}-lb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.web_securityg.id]
+  subnets            = [
+    data.terraform_remote_state.network.outputs.public_subnet_1_id,
+    data.terraform_remote_state.network.outputs.public_subnet_2_id,
+    data.terraform_remote_state.network.outputs.public_subnet_3_id
+  ]
+
+  enable_deletion_protection = false
+}
+
+# Create a Listener for the Load Balancer
+resource "aws_lb_listener" "web_lb_listener" {
+  load_balancer_arn = aws_lb.web_lb.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web_tg.arn
+  }
+}
+
+# Attach Instances to the Target Group
+resource "aws_lb_target_group_attachment" "web_tg_attachment_1" {
+  target_group_arn = aws_lb_target_group.web_tg.arn
+  target_id        = aws_instance.web_1.id
+  port             = 80
+}
+
+resource "aws_lb_target_group_attachment" "web_tg_attachment_2" {
+  target_group_arn = aws_lb_target_group.web_tg.arn
+  target_id        = aws_instance.web_2.id
+  port             = 80
+}
+
+resource "aws_lb_target_group_attachment" "web_tg_attachment_3" {
+  target_group_arn = aws_lb_target_group.web_tg.arn
+  target_id        = aws_instance.web_3.id
+  port             = 80
 }

@@ -1,5 +1,5 @@
 # variables for webservers
-}
+
 # Instance Type
 variable "instance_type" {
   description = "The instance type for the web servers"
@@ -14,18 +14,18 @@ variable "ami_id" {
   default     = "ami-0ae8f15ae66fe8cda"  # Replace with the AMI ID you need
 }
 
-# SSH Key Name
-variable "key_name" {
-  description = "The name of the SSH key pair to use for accessing the web servers"
+# Prefix to identify resources
+variable "prefix" {
+  default     = "web"
   type        = string
-  default     = "your-key"  # Replace with your actual key pair name
+  description = "Name prefix"
 }
 
 # Security Group Name
 variable "web_security_group_name" {
   description = "The name of the security group for web servers"
   type        = string
-  default     = "web-sg"
+  default     = "web_sg"
 }
 
 # Web Server Tags
