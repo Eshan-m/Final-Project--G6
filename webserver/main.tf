@@ -48,6 +48,7 @@ resource "aws_security_group" "web_securityg" {
   }
 }
 
+
 # Launch Web Server in Public Subnet 1
 resource "aws_instance" "web_1" {
   ami                         = var.ami_id
