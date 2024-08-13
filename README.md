@@ -12,5 +12,7 @@
 #		terraform validate
 #		terraform plan
 #		terraform apply
-# Install ansible
-# sudo yum install ansible -y
+
+
+
+
