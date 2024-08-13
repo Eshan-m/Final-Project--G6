@@ -23,17 +23,22 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
+       working-directory: ./network
         run: terraform init
 
       - name: Terraform Format
+       working-directory: ./network
         run: terraform fmt -check
 
       - name: Terraform Validate
+       working-directory: ./network
         run: terraform validate
 
       - name: Terraform Plan
+       working-directory: ./network
         run: terraform plan
 
       - name: Terraform Apply
+      working-directory: ./network
         run: terraform apply -auto-approve
         
