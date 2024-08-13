@@ -14,5 +14,24 @@
 #		terraform apply
 
 
+# Providing public access to s3 bucket
+#
+# Navigate to s3 objects
+# Click on permissions tab
+# Search for 'Block public access (bucket settings)'
+# Click on 'Edit'
+# Disable 'Block all public access'
+# Save changes
+
+
+# Providing public access to images in s3 bucket
+#
+# Navigate to s3 objects
+# Go to specific image
+# Click on permissions tab
+# Click on 'Edit'
+# Search for 'Everyone (public access)'
+# Enable 'Read' access
+# Save changes
 
 
