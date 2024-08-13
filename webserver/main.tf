@@ -3,11 +3,13 @@
 data "terraform_remote_state" "network" { // This is to use Outputs from Remote State
   backend = "s3"
   config = {
-    bucket = "group6-acs1"            // Bucket from where to GET Terraform State
+    bucket = "group6-acs"            // Bucket from where to GET Terraform State
     key    = "network/terraform.tfstate" // Object name in the bucket to GET Terraform State
     region = "us-east-1"                       // Region where bucket created
   }
-}
+  }
+ 
+
 # Security Group for Web Servers
 resource "aws_security_group" "web_securityg" {
   name        = var.web_security_group_name
@@ -46,6 +48,7 @@ resource "aws_security_group" "web_securityg" {
   }
 }
 
+
 # Launch Web Server in Public Subnet 1
 resource "aws_instance" "web_1" {
   ami                         = var.ami_id
@@ -54,19 +57,30 @@ resource "aws_instance" "web_1" {
   security_groups             = [aws_security_group.web_securityg.id]
   key_name                    = aws_key_pair.web.key_name  # Create the Key by running the command ssh-keygen -t rsa  -f web
   associate_public_ip_address = true
+  /*
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo yum -y update 
+              sudo yum -y install httpd
+              echo "<h1>Hello from WebServer 1 - PS1</h1>" > /var/www/html/index.html
+              sudo systemctl start httpd
+              sudo systemctl enable httpd
+              EOF
+  */           
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo yum -y update
+              sudo yum -y install httpd
+              sudo systemctl start httpd
+              sudo systemctl enable httpd
 
-  user_data     = <<-EOF
-    #!/bin/bash
-    yum update -y
-    yum install -y httpd
-    service httpd start
-    chkconfig httpd on
-    echo '<html><h1>Welcome to My Web Server</h1></html>' > /var/www/html/index.html
-    echo '<img src="https://group6-acs1.s3.amazonaws.com/your-image-name" alt="Image from S3">' >> /var/www/html/index.html
-  EOF
-  iam_instance_profile = aws_iam_instance_profile.web_profile.name
-   tags = merge(var.web_server_tags, { Name = "web-server-1" })
-   
+              # Create index.html with team information
+              echo "<h1>Hello from web-server-1</h1>" > /var/www/html/index.html
+              echo "<p>Team: </p>" >> /var/www/html/index.html
+              echo "<p>Members: </p>" >> /var/www/html/index.html
+              EOF
+              
+  tags = merge(var.web_server_tags, { Name = "web-server-1" })
 }
 
 
@@ -274,6 +288,32 @@ resource "aws_lb_target_group_attachment" "web_tg_attachment_3" {
   target_id        = aws_instance.web_3.id
   port             = 80
 }
+/*
+# Auto Scaling Group
+resource "aws_autoscaling_group" "web_asg" {
+  desired_capacity     = 1
+  max_size             = 4
+  min_size             = 1
+  launch_configuration = aws_launch_configuration.web_lc.id
+  vpc_zone_identifier  = [
+    data.terraform_remote_state.network.outputs.public_subnet_1_id,
+    data.terraform_remote_state.network.outputs.public_subnet_2_id,
+    data.terraform_remote_state.network.outputs.public_subnet_3_id
+  ]
 
+  tag {
+    key                 = "Name"
+    value               = "${var.environment}-web-server"
+    propagate_at_launch = true
+  }
 
-
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+# Attach ASG Instances to Target Group
+resource "aws_autoscaling_attachment" "asg_attachment" {
+  autoscaling_group_name = aws_autoscaling_group.web_asg.name
+  lb_target_group_arn    = aws_lb_target_group.web_tg.arn
+}
+*/
