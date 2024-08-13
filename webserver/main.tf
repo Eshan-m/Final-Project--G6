@@ -82,29 +82,24 @@ resource "aws_instance" "web_2" {
   security_groups             = [aws_security_group.web_securityg.id]
   key_name                    = aws_key_pair.web.key_name  # Create the Key by running the command ssh-keygen -t rsa  -f web
   associate_public_ip_address = true
-  user_data = <<-EOF
-              #!/bin/bash
-              sudo yum -y update 
-              sudo yum -y install httpd
-              echo "<h1>Hello from WebServer 2 - PS2</h1>" > /var/www/html/index.html
-              sudo systemctl start httpd
-              sudo systemctl enable httpd
-              EOF
+ 
+ 
+  user_data     = <<-EOF
+    #!/bin/bash
+    yum update -y
+    yum install -y httpd
+    service httpd start
+    chkconfig httpd on
+    echo '<h1>Welcome to Web Server 2</h1>' > /var/www/html/index.html
+    echo '<html><p>Welcome to Web Server 2 - Group 6 Members: Eshan / Pasindu / Kimuel / Lakshman</p></html>' > /var/www/html/index.html
+    echo '<img src="https://group6-acs1.s3.amazonaws.com/1d.jpg" alt="Image from S3">' >> /var/www/html/index.html
+  EOF
+  
+ 
+ 
+ 
   tags = merge(var.web_server_tags, { Name = "BASITION-web-server-2" })
- /*
-  provisioner "file" {
-    source      = "index.html"
-    destination = "/var/www/html/index.html"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo yum install -y httpd",
-      "sudo systemctl start httpd",
-      "sudo systemctl enable httpd",
-    ]
-  }
-  */
+ 
 }
 
 # Launch Web Server in Public Subnet 3
@@ -150,7 +145,7 @@ resource "aws_instance" "web_4" {
     chkconfig httpd on
     echo '<h1>Welcome to Web Server 4</h1>' > /var/www/html/index.html
     echo '<html><p>Welcome to Web Server 4 - Group 6 Members: Eshan / Pasindu / Kimuel / Lakshman</p></html>' > /var/www/html/index.html
-    echo '<img src="https://group6-acs1.s3.amazonaws.com/1b.jpg" alt="Image from S3">' >> /var/www/html/index.html
+    echo '<img src="https://group6-acs1.s3.amazonaws.com/1c.jpg" alt="Image from S3">' >> /var/www/html/index.html
   EOF
   
  
