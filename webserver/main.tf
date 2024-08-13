@@ -54,15 +54,19 @@ resource "aws_instance" "web_1" {
   security_groups             = [aws_security_group.web_securityg.id]
   key_name                    = aws_key_pair.web.key_name  # Create the Key by running the command ssh-keygen -t rsa  -f web
   associate_public_ip_address = true
-  user_data = <<-EOF
-              #!/bin/bash
-              sudo yum -y update 
-              sudo yum -y install httpd
-              echo "<h1>Hello from WebServer 1 - PS1</h1>" > /var/www/html/index.html
-              sudo systemctl start httpd
-              sudo systemctl enable httpd
-              EOF
-  tags = merge(var.web_server_tags, { Name = "web-server-1" })
+
+  user_data     = <<-EOF
+    #!/bin/bash
+    yum update -y
+    yum install -y httpd
+    service httpd start
+    chkconfig httpd on
+    echo '<html><h1>Welcome to My Web Server</h1></html>' > /var/www/html/index.html
+    echo '<img src="https://group6-acs1.s3.amazonaws.com/your-image-name" alt="Image from S3">' >> /var/www/html/index.html
+  EOF
+  iam_instance_profile = aws_iam_instance_profile.web_profile.name
+   tags = merge(var.web_server_tags, { Name = "web-server-1" })
+   
 }
 
 
@@ -273,48 +277,3 @@ resource "aws_lb_target_group_attachment" "web_tg_attachment_3" {
 
 
 
-
-resource "aws_instance" "web" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 AMI
-  instance_type = "t2.micro"
-  key_name      = aws_key_pair.web.key_name
-
-  user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              yum install -y httpd git
-              systemctl start httpd
-              systemctl enable httpd
-              cd /var/www/html
-              git clone https://github.com/jimini55/catsdogs-cloud9.git
-              cp -r catsdogs-cloud9
-              EOF
-
-  tags = {
-    Name = "WebServer"
-  }
-
-  # Additional configuration like security groups, subnet IDs, etc.
-}
-
-
-
-
-
-resource "aws_autoscaling_group" "web_asg" {
-  desired_capacity     = 1
-  max_size             = 4
-  min_size             = 1
-  vpc_zone_identifier  = [
-    aws_subnet.public_subnet_1.id, 
-    aws_subnet.public_subnet_2.id
-  ]
-
-  launch_configuration = aws_launch_configuration.web_launch_config.id
-
-  tag {
-    key                 = "Name"
-    value               = "WebServerASG"
-    propagate_at_launch = true
-  }
-}
