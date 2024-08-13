@@ -63,9 +63,10 @@ resource "aws_instance" "web_1" {
     yum install -y httpd
     service httpd start
     chkconfig httpd on
-    echo '<html><h1>Welcome to Web Server 1</h1></html>' > /var/www/html/index.html
-    echo '<html><p>Group 6 Members: Eshan / Pasindu / Kimuel / Lakshman</p></html>' > /var/www/html/index.html
+    echo '<html><p>Welcome to Web Server 1</p></html>' > /var/www/html/index.html
+    echo '<html><p>Welcome to Web Server 1 - Group 6 Members: Eshan / Pasindu / Kimuel / Lakshman</p></html>' > /var/www/html/index.html
     echo '<img src="https://group6-acs1.s3.amazonaws.com/1a.jpg" alt="Image from S3">' >> /var/www/html/index.html
+     
   EOF
   
    tags = merge(var.web_server_tags, { Name = "web-server-1" })
@@ -123,7 +124,7 @@ resource "aws_instance" "web_3" {
     service httpd start
     chkconfig httpd on
     echo '<h1>Welcome to Web Server 3</h1>' > /var/www/html/index.html
-    echo '<html><p>Group 6 Members: Eshan / Pasindu / Kimuel / Lakshman</p></html>' > /var/www/html/index.html
+    echo '<html><p>Welcome to Web Server 3 - Group 6 Members: Eshan / Pasindu / Kimuel / Lakshman</p></html>' > /var/www/html/index.html
     echo '<img src="https://group6-acs1.s3.amazonaws.com/1b.jpg" alt="Image from S3">' >> /var/www/html/index.html
   EOF
   
@@ -139,30 +140,21 @@ resource "aws_instance" "web_4" {
   security_groups             = [aws_security_group.web_securityg.id]
   key_name                    = aws_key_pair.web.key_name  # Create the Key by running the command ssh-keygen -t rsa  -f web
   associate_public_ip_address = true
-  /*
-  user_data = <<-EOF
-              #!/bin/bash
-              sudo yum -y update 
-              sudo yum -y install httpd
-              echo "<h1>Hello from WebServer 4 - PS4</h1>" > /var/www/html/index.html
-              sudo systemctl start httpd
-              sudo systemctl enable httpd
-              EOF
+ 
+ 
+  user_data     = <<-EOF
+    #!/bin/bash
+    yum update -y
+    yum install -y httpd
+    service httpd start
+    chkconfig httpd on
+    echo '<h1>Welcome to Web Server 4</h1>' > /var/www/html/index.html
+    echo '<html><p>Welcome to Web Server 4 - Group 6 Members: Eshan / Pasindu / Kimuel / Lakshman</p></html>' > /var/www/html/index.html
+    echo '<img src="https://group6-acs1.s3.amazonaws.com/1b.jpg" alt="Image from S3">' >> /var/www/html/index.html
+  EOF
   
-
-  provisioner "file" {
-    source      = "index.html"
-    destination = "/var/www/html/index.html"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo yum install -y httpd",
-      "sudo systemctl start httpd",
-      "sudo systemctl enable httpd",
-    ]
- }
- */
+ 
+ 
  tags = merge(var.web_server_tags, { Name = "web-server-4" })
 }
 
