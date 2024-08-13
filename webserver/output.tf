@@ -75,3 +75,7 @@ output "vmprivate_5_id" {
   description = "ID of the second web server instance"
   value       = aws_instance.vmprivate_5.id
 }
+
+output "lb_dns_name" {
+  value = aws_lb.web_lb.dns_name
+}

@@ -1,7 +1,15 @@
-plugin: aws_ec2
+plugin: amazon.aws.aws_ec2
 regions:
-  - us-east-1
+  - us-east-1  # Ensure this is the correct region
 filters:
   instance-state-name: running
-hostnames:
-  - public_ip_address
+  tag:Name:
+    - web-server-1
+    - BASITION-web-server-2
+    - web-server-3
+    - web-server-4
+    #- web-server-5
+    #- VM5
+keyed_groups:
+  - prefix: tag
+    key: tags.Name
