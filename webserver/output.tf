@@ -1,6 +1,10 @@
 # output for webservers
 
-
+# Output Web Server 1 Details
+output "web_server_1_id" {
+  description = "ID of the first web server instance"
+  value       = aws_instance.web_1.id
+}
 output "web_server_1_public_ip" {
   description = "Public IP address of the first web server"
   value       = aws_instance.web_1.public_ip
@@ -74,8 +78,4 @@ output "vmprivate_5_id" {
 output "lb_dns_name" {
   value = aws_lb.web_lb.dns_name
 }
-# Output Web Server 1 Details
-output "web_server_1_id" {
-  description = "ID of the first web server instance"
-  value       = aws_instance.web_1.id
-}
+
