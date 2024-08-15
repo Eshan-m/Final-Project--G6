@@ -1,4 +1,12 @@
-
+#Webserver main
+# Use remote state to retrieve the data
+data "terraform_remote_state" "network" { // This is to use Outputs from Remote State
+  backend = "s3"
+  config = {
+    bucket = "group6-acs1"            // Bucket from where to GET Terraform State
+    key    = "network/terraform.tfstate" // Object name in the bucket to GET Terraform State
+    region = "us-east-1"                       // Region where bucket created
+  }
   }
  
 
@@ -271,12 +279,4 @@ resource "aws_autoscaling_attachment" "asg_attachment" {
   lb_target_group_arn    = aws_lb_target_group.web_tg.arn
 }
 */
-#Webserver main
-# Use remote state to retrieve the data
-data "terraform_remote_state" "network" { // This is to use Outputs from Remote State
-  backend = "s3"
-  config = {
-    bucket = "group6-acs1"            // Bucket from where to GET Terraform State
-    key    = "network/terraform.tfstate" // Object name in the bucket to GET Terraform State
-    region = "us-east-1"                       // Region where bucket created
-  }
+
