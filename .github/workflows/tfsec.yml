@@ -7,11 +7,13 @@ name: tfsec
 
 on:
   push:
-    branches: [ "pasindu_dev" ]
+
+    branches: [ "main" ]
   pull_request:
-    branches: [ "pasindu_dev" ]
+    branches: [ "main" ]
   schedule:
-    - cron: '41 16 * * 6'
+    - cron: '21 6 * * 2'
+
 
 jobs:
   tfsec:
