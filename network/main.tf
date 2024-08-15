@@ -65,6 +65,21 @@ resource "aws_subnet" "private_subnet_2" {
   }
 }
 
+# Create Public Subnets
+resource "aws_subnet" "public_subnet_1" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.public_subnet_1_cidr
+  availability_zone       = var.availability_zone_1
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "public-subnet-1"
+# Internet Gateway
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+  tags = {
+    Name = "main-gateway"
+  }
+}
 
 # Route Table for Public Subnets
 resource "aws_route_table" "public_rt" {
@@ -130,19 +145,4 @@ resource "aws_route_table_association" "private_association_1" {
 resource "aws_route_table_association" "private_association_2" {
   subnet_id      = aws_subnet.private_subnet_2.id
   route_table_id = aws_route_table.private_rt.id
-}
-# Create Public Subnets
-resource "aws_subnet" "public_subnet_1" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.public_subnet_1_cidr
-  availability_zone       = var.availability_zone_1
-  map_public_ip_on_launch = true
-  tags = {
-    Name = "public-subnet-1"
-# Internet Gateway
-resource "aws_internet_gateway" "main" {
-  vpc_id = aws_vpc.main.id
-  tags = {
-    Name = "main-gateway"
-  }
 }
