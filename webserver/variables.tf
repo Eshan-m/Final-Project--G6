@@ -1,5 +1,10 @@
 # variables for webservers
-
+# AMI ID
+variable "ami_id" {
+  description = "The AMI ID for the web servers"
+  type        = string
+  default     = "ami-0ae8f15ae66fe8cda"  # Replace with the AMI ID you need
+}
 # Instance Type
 variable "instance_type" {
   description = "The instance type for the web servers"
@@ -7,12 +12,7 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
-# AMI ID
-variable "ami_id" {
-  description = "The AMI ID for the web servers"
-  type        = string
-  default     = "ami-0ae8f15ae66fe8cda"  # Replace with the AMI ID you need
-}
+
 
 # Prefix to identify resources
 variable "prefix" {
