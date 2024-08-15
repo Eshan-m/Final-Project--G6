@@ -6,11 +6,7 @@ output "vpc_id" {
   value       = aws_vpc.main.id
 }
 
-# Output Public Subnet IDs
-output "public_subnet_1_id" {
-  description = "ID of the first public subnet"
-  value       = aws_subnet.public_subnet_1.id
-}
+
 
 output "public_subnet_2_id" {
   description = "ID of the second public subnet"
@@ -57,4 +53,9 @@ output "public_route_table_id" {
 output "private_route_table_id" {
   description = "ID of the private route table"
   value       = aws_route_table.private_rt.id
+}
+# Output Public Subnet IDs
+output "public_subnet_1_id" {
+  description = "ID of the first public subnet"
+  value       = aws_subnet.public_subnet_1.id
 }
