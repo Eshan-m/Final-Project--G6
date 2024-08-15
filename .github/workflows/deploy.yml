@@ -3,10 +3,10 @@ name: Terraform Deploy
 on:
   push:
     branches:
-      - pasindu_dev
+      - main
   pull_request:
     branches:
-      - pasindu_dev
+      - main
 
 jobs:
   network:
