@@ -214,8 +214,7 @@ resource "aws_lb" "web_lb" {
   subnets            = [
     data.terraform_remote_state.network.outputs.public_subnet_1_id,
     data.terraform_remote_state.network.outputs.public_subnet_2_id,
-    data.terraform_remote_state.network.outputs.public_subnet_3_id,
-    data.terraform_remote_state.network.outputs.public_subnet_4_id,
+    data.terraform_remote_state.network.outputs.public_subnet_3_id
     
   ]
 
