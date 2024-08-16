@@ -111,6 +111,14 @@ resource "aws_route_table_association" "public_association_4" {
   subnet_id      = aws_subnet.public_subnet_4.id
   route_table_id = aws_route_table.public_rt.id
 }
+# Create an Elastic IP for the NAT Gateway
+resource "aws_eip" "nat" {
+  domain = "vpc"
+
+  tags = {
+    Name = "nat-eip"
+  }
+}
 
 # Create a NAT Gateway in Public Subnet 1
 resource "aws_nat_gateway" "nat" {
@@ -122,14 +130,6 @@ resource "aws_nat_gateway" "nat" {
   }
 }
 
-# Create an Elastic IP for the NAT Gateway
-resource "aws_eip" "nat" {
-  domain = "vpc"
-
-  tags = {
-    Name = "nat-eip"
-  }
-}
 
 # Route Table for Private Subnets
 resource "aws_route_table" "private_rt" {
