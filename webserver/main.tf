@@ -251,6 +251,8 @@ resource "aws_lb_target_group_attachment" "web_tg_attachment_3" {
   target_id        = aws_instance.web_3.id
   port             = 80
 }
+
+
 /*
 # Auto Scaling Group
 resource "aws_autoscaling_group" "web_asg" {
