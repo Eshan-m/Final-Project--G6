@@ -34,5 +34,7 @@ variable "web_server_tags" {
   type        = map(string)
   default     = {
     Name = "web-server"
+    Environment = "dev"
+    Project = "web-application"
   }
 }
