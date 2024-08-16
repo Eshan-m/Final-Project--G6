@@ -92,7 +92,7 @@ resource "aws_instance" "web_2" {
     chkconfig httpd on
     echo '<h1>Welcome to Web Server 2</h1>' > /var/www/html/index.html
     echo '<html><p>Welcome to Web Server 2 - Group 6 Members: Eshan / Pasindu / Kimuel / Lakshman</p></html>' > /var/www/html/index.html
-    echo '<img src="https://group6-acs1.s3.amazonaws.com/1d.jpg" alt="Image from S3">' >> /var/www/html/index.html #Replace with s3 bucket image url
+    echo '<img src="https://group6-acs1.s3.amazonaws.com/1a.jpg" alt="Image from S3">' >> /var/www/html/index.html #Replace with s3 bucket image url
   EOF
   
   tags = merge(var.web_server_tags, { Name = "BASITION-web-server-2" })
