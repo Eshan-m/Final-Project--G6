@@ -3,7 +3,7 @@
 data "terraform_remote_state" "network" { // This is to use Outputs from Remote State
   backend = "s3"
   config = {
-    bucket = "group6-acs1"            // Bucket from where to GET Terraform State
+    bucket = "group6-acs"            // Bucket from where to GET Terraform State
     key    = "network/terraform.tfstate" // Object name in the bucket to GET Terraform State
     region = "us-east-1"                       // Region where bucket created
   }
@@ -214,7 +214,9 @@ resource "aws_lb" "web_lb" {
   subnets            = [
     data.terraform_remote_state.network.outputs.public_subnet_1_id,
     data.terraform_remote_state.network.outputs.public_subnet_2_id,
-    data.terraform_remote_state.network.outputs.public_subnet_3_id
+    data.terraform_remote_state.network.outputs.public_subnet_3_id,
+    data.terraform_remote_state.network.outputs.public_subnet_4_id,
+    
   ]
 
   enable_deletion_protection = false
