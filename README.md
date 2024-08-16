@@ -34,4 +34,14 @@
 # Enable 'Read' access
 # Save changes
 
+# Automate Terraform Deployment
+#
+# Navigate to .github/workflow/deploy.yml
+# Create a role in the AWS env which you need to deploy the resources
+# Get the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
+# Mention the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY to automate the deployment
+# Generate a Terraform Cloud user API token and store it as a GitHub secret (e.g. TF_API_TOKEN) on this repository
+
+
+
 
