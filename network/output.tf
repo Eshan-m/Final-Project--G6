@@ -25,6 +25,7 @@ output "public_subnet_4_id" {
   value       = aws_subnet.public_subnet_4.id
 }
 
+
 # Output Private Subnet IDs
 output "private_subnet_1_id" {
   description = "ID of the first private subnet"
